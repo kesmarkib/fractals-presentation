@@ -4,6 +4,7 @@ const fragmentShader = `
   precision highp float;
 
   uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
 
   vec2 complexAdd(vec2 z_0, vec2 z_1 )
   {
@@ -35,8 +36,12 @@ const fragmentShader = `
 
   float iterations(vec2 z_0)
   {
+      vec2 mouse = u_mouse/u_resolution.xy;
+      mouse.x = mouse.x * 4.0 - 2.0;
+      mouse.y = mouse.y * 2.0 - 1.0;
+  
       vec2 z_n = z_0.xy;
-      vec2 c = z_0.xy;
+      vec2 c = mouse.xy;
       for(int i = 0; i < 250; i++)
       {
           vec2 z = complexAdd(complexMult(z_n, z_n), c);
@@ -50,8 +55,8 @@ const fragmentShader = `
 
   void main() {
     vec2 uv = vec2(0.0);
-    uv.x = gl_FragCoord.x/u_resolution.x * 4.0 - 2.5;
-    uv.y = gl_FragCoord.y/u_resolution.y * 4.0 - 1.0;
+    uv.x = gl_FragCoord.x/u_resolution.x * 4.0 - 2.0;
+    uv.y = gl_FragCoord.y/u_resolution.y * 2.0 - 1.0;
 
     vec3 color = vec3(0.0);
 
@@ -70,12 +75,34 @@ const fragmentShader = `
 
 
 
-const canvasContainer = document.getElementById("canvas-container")
 const canvas = document.getElementById("webgl")
 
+const c = canvas.getBoundingClientRect()
+
 const sizes = {
-  width: canvasContainer.getBoundingClientRect().width,
-  height: canvasContainer.getBoundingClientRect().height
+  width: c.width,
+  height: c.height
+}
+
+const mousePos = {
+  mx: 0,
+  my: 0,
+}
+
+
+canvas.addEventListener("mousedown", (e) =>{
+  mousePos.mx = e.clientX - c.left
+  mousePos.my = e.clientY - c.top
+  canvas.addEventListener("mousemove", mouseMove)
+})
+
+canvas.addEventListener("mouseup", () =>{
+  canvas.removeEventListener("mousemove", mouseMove)
+})
+
+function mouseMove(e) {
+  mousePos.mx = e.clientX - c.left
+  mousePos.my = e.clientY - c.top
 }
 
 const renderer = new THREE.WebGLRenderer({ canvas })
@@ -90,7 +117,8 @@ const geometry = new THREE.PlaneGeometry(2, 2)
 
 const uniforms = {
   u_time: { value: 0.0 },
-  u_resolution: {value: new THREE.Vector2(sizes.width, sizes.height)}
+  u_resolution: {value: new THREE.Vector2(sizes.width, sizes.height)},
+  u_mouse: {value: new THREE.Vector2(mousePos.mx, mousePos.my)}
 }
 
 const material = new THREE.ShaderMaterial({
@@ -108,6 +136,7 @@ const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
 function animate() {
+  uniforms.u_mouse.value = new THREE.Vector2(mousePos.mx, mousePos.my)
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
