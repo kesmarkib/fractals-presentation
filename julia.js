@@ -64,7 +64,12 @@ const fragmentShader = `
     
     float x_clamp = iterationsNum/250.0;
 
-    color = vec3(x_clamp);
+
+    float r = x_clamp;
+    float g = x_clamp;
+    float b = x_clamp;
+    
+    color = vec3(r, g ,b);
 
     gl_FragColor = vec4(color, 1.0);
   }
@@ -105,7 +110,7 @@ canvas.addEventListener("mouseup", () =>{
 function mouseMove(e) {
   mousePos.mx = e.clientX - c.left
   mousePos.my = e.clientY - c.top
-  coords.innerHTML = `(x: ${mousePos.mx/sizes.width * 4.0 - 2.5} | y: ${(mousePos.my/sizes.height * 2.0 - 1.0) * -1})`
+  coords.innerHTML = `(x: ${mousePos.mx/sizes.width * 4.0 - 2.5} | i: ${(mousePos.my/sizes.height * 2.0 - 1.0) * -1})`
 }
 
 
