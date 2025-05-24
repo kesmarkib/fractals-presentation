@@ -37,8 +37,8 @@ const fragmentShader = `
   float iterations(vec2 z_0)
   {
       vec2 mouse = u_mouse/u_resolution.xy;
-      mouse.x = mouse.x * 4.0 - 2.5;
-      mouse.y = mouse.y * 2.0 - 1.0;
+      mouse.x = mouse.x * 4.0 - 2.0;
+      mouse.y = (mouse.y * 2.0 - 1.0) * -1.0;
   
       vec2 z_n = z_0.xy;
       vec2 c = mouse.xy;
@@ -75,6 +75,7 @@ const fragmentShader = `
 
 
 
+
 const canvas = document.getElementById("webgl")
 
 const c = canvas.getBoundingClientRect()
@@ -95,7 +96,6 @@ canvas.addEventListener("mousedown", (e) =>{
   mousePos.mx = e.clientX - c.left
   mousePos.my = e.clientY - c.top
   canvas.addEventListener("mousemove", mouseMove)
-  console.log("a")
 })
 
 canvas.addEventListener("mouseup", () =>{
@@ -105,8 +105,7 @@ canvas.addEventListener("mouseup", () =>{
 function mouseMove(e) {
   mousePos.mx = e.clientX - c.left
   mousePos.my = e.clientY - c.top
-  console.log("a")
-  coords.innerHTML = `(x: ${mousePos.mx/sizes.width * 4.0 - 2.5} | y: ${mousePos.my/sizes.height * 2.0 - 1.0})`
+  coords.innerHTML = `(x: ${mousePos.mx/sizes.width * 4.0 - 2.5} | y: ${(mousePos.my/sizes.height * 2.0 - 1.0) * -1})`
 }
 
 
