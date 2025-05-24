@@ -1,0 +1,82 @@
+:root{
+    --background: #000000;
+    --highlight1: #ff0000;
+    --highlight2: #00ff00;
+    --main_text: #ffffff;
+    --subtle_text: #aaaaaa;
+}
+
+
+
+@font-face {
+    font-family: opensans;
+    src: url(OpenSans-VariableFont_wdth,wght.ttf);
+}
+
+
+html, body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--background);
+}
+
+.page{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text{
+    
+    font-family: opensans;
+    font-weight: normal;
+    color: var(--main_text);
+}
+
+#title{
+    width: 100%;
+    height: 100px;
+    position: absolute;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 10ch;
+
+}
+
+#text-body{
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+#canvas-container{
+    width: 800px;
+    height: 900px;
+    right: 0;
+
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+
+}
+
+#page-number{
+    color: var(--subtle_text);
+    width: auto;
+    height: auto;
+
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+
+}
