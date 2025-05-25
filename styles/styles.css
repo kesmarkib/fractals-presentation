@@ -1,9 +1,6 @@
 :root{
     --background: #000000;
-    --highlight1: #ff0000;
-    --highlight2: #00ff00;
-    --main_text: #ffffff;
-    --subtle_text: #aaaaaa;
+    --subtle_text: #ffffff;
 }
 
 
@@ -22,6 +19,46 @@ html, body{
     background-color: var(--background);
 }
 
+
+#dropdown-container{
+    z-index: 1;
+    position: absolute;
+    top: 20px;
+    left: 15px;
+}
+
+#hamburger-menu{
+    filter: invert(0.75);
+    scale: 2.0;
+    margin-bottom: 10px;
+}
+
+#hamburger-menu:hover{
+    scale: 2.2;
+}
+
+.option{
+    width: 150px;
+    height: auto;
+    background-color: #ffffff38;
+    color:  var(--subtle_text);
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    padding: 5px;
+    margin-left: 5px;
+}
+
+.option:hover{
+    background-color: #ffffff85;
+}
+
+.active{
+    background-color: #365a83 !important;
+}
+
+
 .page{
     width: 100%;
     height: 100%;
@@ -32,21 +69,8 @@ html, body{
 }
 
 .text{
-    
     font-family: opensans;
     font-weight: normal;
-    color: var(--main_text);
-}
-
-#canvas-container{
-    width: 800px;
-    height: 900px;
-    right: 0;
-
-    display: flex;
-    justify-content: center;
-    justify-items: center;
-
 }
 
 #coordinates-container{

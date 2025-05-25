@@ -1,101 +1,141 @@
 import * as THREE from 'three';
 
-const fragmentShader = `
-  precision highp float;
+const dropdownIcon = document.getElementById("dropdown-button")
+const dropdown = document.getElementById("options")
 
-  uniform vec2 u_resolution;
-  uniform vec2 u_mouse;
+dropdown.style.visibility = "hidden";
 
-  vec2 complexAdd(vec2 z_0, vec2 z_1 )
-  {
-      float a = z_0.x;
-      float b = z_0.y;
-      float c = z_1.x;
-      float d = z_1.y;
-    
-      return vec2(a + c, b + d);
+dropdownIcon.addEventListener("click", () => {
+  const clicked = dropdownIcon.getAttribute("clicked")
+  if(clicked == "false"){
+    dropdownIcon.setAttribute("clicked", "true")
+    dropdown.style.visibility = "visible";
+  }else{
+    dropdownIcon.setAttribute("clicked", "false")
+    dropdown.style.visibility = "hidden";
   }
+})
 
-  vec2 complexMult( vec2 z_0, vec2 z_1 )
-  {
-      float a = z_0.x;
-      float b = z_0.y;
-      float c = z_1.x;
-      float d = z_1.y;
+let fragmentShader = `
+    precision highp float;
 
-      return vec2((a*c - b*d), (b*c + a*d));
-  }
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform float u_xaxis;
+    uniform bool u_type;
 
-  float absValue ( vec2 z_0 ) 
-  {
-      float a = z_0.x;
-      float b = z_0.y;
+    vec2 complexAdd(vec2 z_0, vec2 z_1 )
+    {
+        float a = z_0.x;
+        float b = z_0.y;
+        float c = z_1.x;
+        float d = z_1.y;
 
-      return sqrt(pow(a, 2.0) + pow(b, 2.0));
-  }
+        return vec2(a + c, b + d);
+    }
 
-  float iterations(vec2 z_0)
-  {
-      vec2 mouse = u_mouse/u_resolution.xy;
-      mouse.x = mouse.x * 4.0 - 2.5;
-      mouse.y = mouse.y * 2.0 - 1.0;
-  
-      vec2 z_n = z_0.xy;
-      vec2 c = mouse.xy;
-      for(int i = 0; i < 250; i++)
-      {
-          vec2 z = complexAdd(complexMult(z_n, z_n), c);
-          if ( absValue(z) > 2.0 ) {
-              return float(i);
-          }
-          z_n = z;
-      }
-      return 0.0;
-  }
+    vec2 complexMult( vec2 z_0, vec2 z_1 )
+    {
+        float a = z_0.x;
+        float b = z_0.y;
+        float c = z_1.x;
+        float d = z_1.y;
 
-  void main() {
-    vec2 uv = vec2(0.0);
-    uv.x = gl_FragCoord.x/u_resolution.x * 4.0 - 2.0;
-    uv.y = gl_FragCoord.y/u_resolution.y * 2.0 - 1.0;
+        return vec2((a*c - b*d), (b*c + a*d));
+    }
 
-    vec3 color = vec3(0.0);
+    float absValue ( vec2 z_0 ) 
+    {
+        float a = z_0.x;
+        float b = z_0.y;
 
-    float iterationsNum = iterations(uv.xy);
-    
-    float x_clamp = iterationsNum/250.0;
+        return sqrt(pow(a, 2.0) + pow(b, 2.0));
+    }
 
-    color = vec3(x_clamp);
+    float iterations(vec2 z_0)
+    {
+        vec2 mouse = u_mouse/u_resolution.xy;
+        mouse.x = mouse.x * 4.0 - u_xaxis;
+        mouse.y = (mouse.y * 2.0 - 1.0) * -1.0;
 
-    gl_FragColor = vec4(color, 1.0);
-  }
+        vec2 z_n = z_0.xy;
+        vec2 c = z_0.xy;
+
+        if(u_type == true){
+          c = mouse.xy;
+        }
+
+        
+        for(int i = 0; i < 250; i++)
+        {
+            vec2 z = complexAdd(complexMult(z_n, z_n), c);
+            if ( absValue(z) > 2.0 ) {
+                return float(i);
+            }
+            z_n = z;
+        }
+        return 0.0;
+    }
+
+    void main() {
+      vec2 uv = vec2(0.0);
+      uv.x = gl_FragCoord.x/u_resolution.x * 4.0 - u_xaxis;
+      uv.y = gl_FragCoord.y/u_resolution.y * 2.0 - 1.0;
+
+      vec3 color = vec3(0.0);
+
+      float iterationsNum = iterations(uv.xy);
+
+      float x_clamp = iterationsNum/250.0;
 
 
+      float r = x_clamp;
+      float g = x_clamp;
+      float b = x_clamp;
 
-`
+      color = vec3(r, g ,b);
 
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `
 
-
+//uniforms
 const canvas = document.getElementById("webgl")
 
-const c = canvas.getBoundingClientRect()
-
 const sizes = {
-  width: c.width,
-  height: c.height
-}
-
-const mousePos = {
-  mx: 0,
-  my: 0,
+  width: window.screen.availWidth,
+  height: window.screen.availHeight
 }
 
 const coords = document.getElementById("coordinates")
 
+const mousePos = {
+  mx: 0,
+  my: 0
+}
+
+const uniforms = {
+  u_time: { value: 0.0 },
+  u_resolution: {value: new THREE.Vector2(sizes.width, sizes.height)},
+  u_mouse: {value: new THREE.Vector2(mousePos.mx, mousePos.my)},
+  u_xaxis: {value: 2.5},
+  u_type: {value: false}
+}
+
+function updateMousePosDisplay(){
+  coords.innerHTML = `(x: ${mousePos.mx/sizes.width * 4.0 - uniforms.u_xaxis.value} | i: ${(mousePos.my/sizes.height * 2.0 - 1.0) * -1})`
+}
+
+function resetMousePos(){
+  mousePos.mx = 0.0;
+  mousePos.my = 0.0;
+}
+
 canvas.addEventListener("mousedown", (e) =>{
-  mousePos.mx = e.clientX - c.left
-  mousePos.my = e.clientY - c.top
+  mousePos.mx = e.clientX
+  mousePos.my = e.clientY
+  updateMousePosDisplay()
   canvas.addEventListener("mousemove", mouseMove)
-  console.log("a")
 })
 
 canvas.addEventListener("mouseup", () =>{
@@ -103,12 +143,57 @@ canvas.addEventListener("mouseup", () =>{
 })
 
 function mouseMove(e) {
-  mousePos.mx = e.clientX - c.left
-  mousePos.my = e.clientY - c.top
-  console.log("a")
-  coords.innerHTML = `(x: ${mousePos.mx/sizes.width * 4.0 - 2.5} | y: ${mousePos.my/sizes.height * 2.0 - 1.0})`
+  mousePos.mx = e.clientX 
+  mousePos.my = e.clientY
+  updateMousePosDisplay()
 }
 
+let material = new THREE.ShaderMaterial({
+  uniforms,
+  vertexShader:`
+    void main() {
+      gl_Position = vec4(position, 1.0);
+    }
+  `,
+  fragmentShader
+})
+
+
+let active;
+
+Array.from(dropdown.children).forEach(child => {
+  child.addEventListener("click", () => {
+    document.getElementsByClassName("active")[0].classList.remove("active")
+    child.classList.add("active")
+    active = child.getAttribute("id")
+    change(active)
+  })
+})
+
+function change(active){
+  switch(active) {
+    case "m-opt":
+      uniforms.u_type.value = false;
+      uniforms.u_xaxis.value = 2.5;
+      resetMousePos()
+      updateMousePosDisplay()
+      break;
+
+    case "j-opt":
+      uniforms.u_type.value = true;
+      uniforms.u_xaxis.value = 2.0;
+      resetMousePos()
+      updateMousePosDisplay()
+      break;
+
+    case "z-opt":
+      
+      break;
+
+    default:
+      break;
+  }
+}
 
 const renderer = new THREE.WebGLRenderer({ canvas })
 renderer.setSize(sizes.width, sizes.height)
@@ -120,25 +205,11 @@ const scene = new THREE.Scene()
 
 const geometry = new THREE.PlaneGeometry(2, 2)
 
-const uniforms = {
-  u_time: { value: 0.0 },
-  u_resolution: {value: new THREE.Vector2(sizes.width, sizes.height)},
-  u_mouse: {value: new THREE.Vector2(mousePos.mx, mousePos.my)}
-}
-
-const material = new THREE.ShaderMaterial({
-  uniforms,
-  vertexShader:`
-    void main() {
-      gl_Position = vec4(position, 1.0);
-    }
-  `,
-  fragmentShader
-})
-
 
 const mesh = new THREE.Mesh(geometry, material)
+mesh.material.needsUpdate = true
 scene.add(mesh)
+
 
 function animate() {
   uniforms.u_mouse.value = new THREE.Vector2(mousePos.mx, mousePos.my)
