@@ -16,6 +16,41 @@ dropdownIcon.addEventListener("click", () => {
   }
 })
 
+const controlsIcon = document.getElementById("controls-button")
+const controlOptions = document.getElementById("control-options")
+
+controlOptions.style.width = "0px";
+
+controlsIcon.addEventListener("click", () => {
+  const clicked = controlsIcon.getAttribute("clicked")
+  if(clicked == "false"){
+    controlsIcon.setAttribute("clicked", "true")
+    controlOptions.style.width = "500px";
+  }else{
+    controlsIcon.setAttribute("clicked", "false")
+    controlOptions.style.width = "0px";
+  }
+})
+
+function resetControls() {
+  Array.from(controlOptions.children).forEach(child => {
+    if(Array.from(child.classList).includes("active-opt")){
+      child.classList.remove("active-opt")
+    }
+  })
+}
+
+Array.from(controlOptions.children).forEach(child => {
+  child.children[0].addEventListener("click", () => {
+    if(Array.from(child.classList).includes("active-opt")){
+      child.classList.remove("active-opt")
+    }else{
+      resetControls()
+      child.classList.add("active-opt")
+    }
+  })
+})
+
 let fragmentShader = `
     precision highp float;
 
@@ -23,6 +58,8 @@ let fragmentShader = `
     uniform vec2 u_mouse;
     uniform float u_xaxis;
     uniform bool u_type;
+    uniform float u_zoom;
+    uniform vec2 u_center;
 
     vec2 complexAdd(vec2 z_0, vec2 z_1 )
     {
@@ -119,7 +156,9 @@ const uniforms = {
   u_resolution: {value: new THREE.Vector2(sizes.width, sizes.height)},
   u_mouse: {value: new THREE.Vector2(mousePos.mx, mousePos.my)},
   u_xaxis: {value: 2.5},
-  u_type: {value: false}
+  u_type: {value: false},
+  u_zoom: {value: 1.0},
+  u_center: {value: new THREE.Vector2(0.0, 0.0)} 
 }
 
 function updateMousePosDisplay(){
@@ -171,28 +210,21 @@ Array.from(dropdown.children).forEach(child => {
 })
 
 function change(active){
-  switch(active) {
-    case "m-opt":
-      uniforms.u_type.value = false;
-      uniforms.u_xaxis.value = 2.5;
-      resetMousePos()
-      updateMousePosDisplay()
-      break;
+    switch(active) {
+      case "m-opt":
+        uniforms.u_type.value = false;
+        uniforms.u_xaxis.value = 2.5;
+        resetMousePos()
+        updateMousePosDisplay()
+        break;
 
-    case "j-opt":
-      uniforms.u_type.value = true;
-      uniforms.u_xaxis.value = 2.0;
-      resetMousePos()
-      updateMousePosDisplay()
-      break;
-
-    case "z-opt":
-      
-      break;
-
-    default:
-      break;
-  }
+      case "j-opt":
+        uniforms.u_type.value = true;
+        uniforms.u_xaxis.value = 2.0;
+        resetMousePos()
+        updateMousePosDisplay()
+        break;
+    }
 }
 
 const renderer = new THREE.WebGLRenderer({ canvas })

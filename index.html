@@ -13,12 +13,28 @@
             
             <div id="dropdown-container">
                 <div id="dropdown-button" clicked="false">
-                    <img id="hamburger-menu" src="styles/list.svg">
+                    <img id="hamburger-menu" class="icon" src="styles/svgs/list.svg">
                 </div>
                 <div id="options">
-                    <div class="option text active" id="m-opt">Mandelbrot set</div>
-                    <div class="option text" id="j-opt">Julia set</div>
-                    <div class="option text" id="z-opt">Zoom </div>
+                    <div class="option text type active" id="m-opt">Mandelbrot set</div>
+                    <div class="option text type " id="j-opt">Julia set</div>
+                </div>
+            </div>
+
+            <div id="controls-container">
+                <div id="controls-button" clicked="false">
+                    <img id="controls-icon" class="icon" src="styles/svgs/nut.svg">
+                </div>
+                <div id="control-options">
+                    <div id="pan" class="opt">
+                        <img id="pan-icon" class="icon control-opt" src="styles/svgs/hand-index-thumb.svg">
+                    </div>
+                    <div id="zoom" class="opt">
+                        <img id="zoom-icon" class="icon control-opt" src="styles/svgs/zoom-in.svg">
+                    </div>
+                    <div id="reset" class="opt">
+                        <img id="reset-icon" class="icon control-opt" src="styles/svgs/arrow-counterclockwise.svg">
+                    </div>
                 </div>
             </div>
 

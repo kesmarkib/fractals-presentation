@@ -19,22 +19,33 @@ html, body{
     background-color: var(--background);
 }
 
+.icon{
+    padding: 0;
+    filter: invert(0.75);
+}
 
 #dropdown-container{
     z-index: 1;
     position: absolute;
-    top: 20px;
+    top: 80px;
     left: 15px;
 }
 
+#dropdown-button{
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #hamburger-menu{
-    filter: invert(0.75);
-    scale: 2.0;
-    margin-bottom: 10px;
+    scale: 2.5;
 }
 
 #hamburger-menu:hover{
-    scale: 2.2;
+    scale: 2.7;
+    cursor: pointer;
 }
 
 .option{
@@ -52,12 +63,72 @@ html, body{
 
 .option:hover{
     background-color: #ffffff85;
+    cursor: pointer;
 }
 
 .active{
     background-color: #365a83 !important;
 }
 
+#controls-container{
+    z-index: 1;
+    position: absolute;
+    top: 20px;
+    left: 15px;
+    width: auto;
+    height: auto;
+
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+#controls-button{
+    scale: 2.0;
+    padding-left: 5px;
+    margin-right: 10px;
+}
+
+#controls-button:hover{
+    scale: 1.8;
+    cursor: pointer;
+}
+
+#control-options{
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    transition: width .5s;
+    border-radius: 5px;
+    background-color: #ffffff48;;
+
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.control-opt{
+    scale: 2.0;
+}
+
+.control-opt:hover{
+    scale: 2.2;
+    cursor: pointer;
+}
+
+.opt{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+}
+
+.active-opt{
+    background-color: #365a83;
+}
 
 .page{
     width: 100%;
